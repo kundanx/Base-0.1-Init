@@ -8,23 +8,18 @@
 #include  <stdio.h>
 
 
-#ifdef _CLASSICAL_PID
-const float kp[4] = {1.0, 1.0, 1.0, 1.0};
-const float ki[4] = {15, 15, 15, 15};
-const float kd[4] = {0.0, 0.01, 0.01, 0.01};
-#endif
+const float kp[4] = {0.5, 1.2, 0.4, 0.4};
+const float ki[4] = {15.0, 20.0, 15.0, 10.5};
+const float kd[4] = {0.001, 0.0005, 0.0005, 0.0005};
 
-#ifdef _FUZZY_PID
-const float kp[4] = {2, 2, 2, 2};
-const float ki[4] = {20, 20, 30, 20};
-const float kd[4] = {0.009, 0.009, 0.009, 0.008};
-#endif
+// const float kp[4] = {1.2, 1.2, 1.2, 1.2};
+// const float ki[4] = {16, 16, 16, 16};
+// const float kd[4] = {0.002, 0.002, 0.002, 0.002};
 
-const float pid_output_to_speed_factors[4] = {100.0, 100.0, 100.0, 100.0};
+const float pid_output_to_speed_factors[4] = {56.52f, 72.22f, 55.89, 52.75f}; 
 const float ppr = 1000;
 
 uint8_t prev_button1 = 0x00, prev_button2 = 0x00;
-
 
 void Robot::init()
 {
@@ -37,7 +32,7 @@ void Robot::init()
     // 2: M4 -> E4
     // 3: M2 -> E1
 
-    base_motors[0] = Motor(&M1P_TIMER, M1D_GPIO_Port, M1P_TIMER_CHANNEL, M1D_Pin, true);
+    base_motors[0] = Motor(&M1P_TIMER, M1D_GPIO_Port, M1P_TIMER_CHANNEL, M1D_Pin);
     base_motors[1] = Motor(&M3P_TIMER, M3D_GPIO_Port, M3P_TIMER_CHANNEL, M3D_Pin);
     base_motors[2] = Motor(&M4P_TIMER, M4D_GPIO_Port, M4P_TIMER_CHANNEL, M4D_Pin);
     base_motors[3] = Motor(&M2P_TIMER, M2D_GPIO_Port, M2P_TIMER_CHANNEL, M2D_Pin);
@@ -47,8 +42,6 @@ void Robot::init()
     base_motor_encoders[2] = Encoder(&ENC4_TIMER, ppr); 
     base_motor_encoders[3] = Encoder(&ENC1_TIMER, ppr); 
 
-
-#ifdef _CLASSICAL_PID
     // const float kus[] = {3.5, 3.5, 1.0, 3.0}; //{0.565, 0.565, 0.55, 0.55};
     // const float tu = 0.05;
     for (int i = 0; i < 4; i++)
@@ -63,17 +56,6 @@ void Robot::init()
         base_motor_pid_controllers[i].SetSampleTime(MOTOR_LOOP_TIME);
         base_motor_pid_controllers[i].SetMode(AUTOMATIC);
     }
-#endif
-
-#ifdef _FUZZY_PID
-    for (int i = 0; i < 4; i++)
-    {
-        base_motor_fuzzy_pid[i] = fuzzy_pid();
-        base_motors[i].init();
-        base_motor_encoders[i].init();
-        base_motor_fuzzy_pid[i].set_parameter(kp[i], ki[i], kd[i], -pid_output_to_speed_factors[i], pid_output_to_speed_factors[i]);
-    }
-#endif
 
     joystick.Init();
 
@@ -107,7 +89,6 @@ void Robot::run()
 
     for (int i = 0; i < 4; i++)
     {
-#ifdef _CLASSICAL_PID
         float encoder_omega = base_motor_encoders[i].get_omega();
         base_motor_pid_controllers[i].Input = encoder_omega;
 
@@ -121,17 +102,6 @@ void Robot::run()
             //  base_motors[i].set_speed(motor_omegas[i]/100);
             base_motor_encoders[i].reset_encoder_count();
         }
-        
-#endif
-
-#ifdef _FUZZY_PID
-        base_motor_pid_inputs[i] = base_motor_encoders[i].get_omega();
-        base_motor_pid_setpoints[i] = motor_omegas[i];
-        base_motor_pid_outputs[i] = base_motor_fuzzy_pid[i].compute_fuzzy_selfTuning_PID(base_motor_pid_setpoints[i],
-                                                                                         base_motor_pid_inputs[i]);
-        base_motors[i].set_speed(base_motor_pid_outputs[i] / pid_output_to_speed_factors[i]);
-        base_motor_encoders[i].reset_encoder_count();
-#endif
     }
     printf("\n");
 }

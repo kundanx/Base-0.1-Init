@@ -89,10 +89,10 @@ void Error_Handler(void);
 #define RED_LED_GPIO_Port GPIOD
 #define BLUE_LED_Pin GPIO_PIN_15
 #define BLUE_LED_GPIO_Port GPIOD
-#define EN2_C1_Pin GPIO_PIN_4
-#define EN2_C1_GPIO_Port GPIOB
-#define EN2_C2_Pin GPIO_PIN_5
-#define EN2_C2_GPIO_Port GPIOB
+#define ENC2_C1_Pin GPIO_PIN_4
+#define ENC2_C1_GPIO_Port GPIOB
+#define ENC2_C2_Pin GPIO_PIN_5
+#define ENC2_C2_GPIO_Port GPIOB
 #define ENC3_C1_Pin GPIO_PIN_6
 #define ENC3_C1_GPIO_Port GPIOB
 #define ENC3_C2_Pin GPIO_PIN_7
