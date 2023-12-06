@@ -41,4 +41,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     {
         robot.joystick.RxCallback();
     }
+    else if (huart->Instance == robot.deadWheel.huart->Instance)
+    {
+        if (robot.deadWheel.get_received_data(robot.odom_rx_data) == OK)
+        {
+            memcpy(&robot.odom, robot.odom_rx_data, 12);
+            printf("odom:: %f %f %f\n", robot.odom.x*100.0f, robot.odom.y*100.0f, robot.odom.theta*180.0f/M_PI);
+        }
+    }
 }

@@ -3,6 +3,7 @@
 
 
 #define JOYSTICK_UART           (huart2)
+#define DEADWHEEL_UART          (huart4)
 
 #define M1P_TIMER               (htim2)
 #define M2P_TIMER               (htim2)

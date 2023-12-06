@@ -58,6 +58,7 @@ void Robot::init()
     }
 
     joystick.Init();
+    deadWheel.init();
 
     motor_loop = HAL_GetTick();
     robot_loop = HAL_GetTick();
@@ -92,7 +93,7 @@ void Robot::run()
         float encoder_omega = base_motor_encoders[i].get_omega();
         base_motor_pid_controllers[i].Input = encoder_omega;
 
-        printf("%f ", encoder_omega);
+        // printf("%ld ", base_motor_encoders[i].count_aggregate);
 
         base_motor_pid_controllers[i].Setpoint = motor_omegas[i];
 
@@ -103,7 +104,7 @@ void Robot::run()
             base_motor_encoders[i].reset_encoder_count();
         }
     }
-    printf("\n");
+    // printf("\n");
 }
 
 

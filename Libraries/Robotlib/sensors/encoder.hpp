@@ -9,7 +9,7 @@ public:
   TIM_HandleTypeDef *henc;
   uint16_t ppr = 1;
   float omega = 0;
-  int64_t count_aggregate = 0, prevCount = 0;
+  int32_t count_aggregate = 0, prevCount = 0;
   uint32_t last_reset_time = 0;
 
   Encoder() {};
