@@ -3,6 +3,8 @@
 #include "Robot.hpp"
 #include "usart.h"
 
+// #define __COUNT__
+
 Robot robot;
 
 int Robot_main()
@@ -33,6 +35,10 @@ void operate_robot()
     }
 }
 
+#ifdef __COUNT__
+int32_t odata[3];
+#endif
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     __HAL_UART_FLUSH_DRREGISTER(huart);
@@ -41,12 +47,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     {
         robot.joystick.RxCallback();
     }
-    else if (huart->Instance == robot.deadWheel.huart->Instance)
+    else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
     {
-        if (robot.deadWheel.get_received_data(robot.odom_rx_data) == OK)
+        if (robot.deadMotor.deadWheel.get_received_data(robot.deadMotor.odom_rx_data) == OK)
         {
-            memcpy(&robot.odom, robot.odom_rx_data, 12);
-            printf("odom:: %f %f %f\n", robot.odom.x*100.0f, robot.odom.y*100.0f, robot.odom.theta*180.0f/M_PI);
+#ifndef __COUNT__
+            memcpy(&robot.deadMotor.odom, robot.deadMotor.odom_rx_data, 12);
+            // printf("odom:: %f %f %f\n", robot.deadMotor.odom.x * 100.0f, robot.deadMotor.odom.y * 100.0f, robot.deadMotor.odom.theta * 180.0f / M_PI);
+#endif
+
+#ifdef __COUNT__
+            memcpy(odata, robot.deadMotor.odom_rx_data, 12);
+            printf("odom:: %ld %ld %ld\n", odata[0], odata[1], odata[2]);
+#endif
         }
     }
 }

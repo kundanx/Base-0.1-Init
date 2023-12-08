@@ -120,4 +120,19 @@ static void test() {
   dot_product(a,b);
 }
 
+inline float round2(float val)
+{
+  return float(int(val*100.0f)) / 100.0f;
+}
+
+inline float round3(float val)
+{
+  return float(int(val*1000.0f)) / 1000.0f;
+}
+
+inline float round4(float val)
+{
+  return float(int(val*10000.0f)) / 10000.0f;
+}
+
 #endif // MATH_H_

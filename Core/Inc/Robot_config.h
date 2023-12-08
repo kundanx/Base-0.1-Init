@@ -1,6 +1,8 @@
 #ifndef ROBOT_CONFIG_H__
 #define ROBOT_CONFIG_H__
 
+#include "usart.h"
+#include "tim.h"
 
 #define JOYSTICK_UART           (huart2)
 #define DEADWHEEL_UART          (huart4)
